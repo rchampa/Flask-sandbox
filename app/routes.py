@@ -1,9 +1,11 @@
 #to active the enviroment just type . bin/activate
 
 #First. we imported the Flask class and a function render_template.
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash
 #Importing forms, preventing a CSRF attack
 from forms import ContactForm
+
+from flask.ext.mail import Message, Mail
  
 #we created a new instance of the Flask class.
 app = Flask(__name__)  
@@ -13,7 +15,19 @@ app = Flask(__name__)
 #When the form POSTs to your server, the token is checked first. 
 #If the token does not match, your server rejects the form submission and does not touch the form data. 
 #If the token matches, the server proceeds with form handling and validation.
-app.secret_key = 'yo me llamo Ralf' #conviene que sea algo mas compleja ;)   
+app.secret_key = 'yo me llamo Ralf' #conviene que sea algo mas compleja ;) 
+ 
+mail = Mail()
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = 'contact@example.com'
+app.config["MAIL_PASSWORD"] = 'your-password'
+ 
+mail.init_app(app)
+ 
+  
  
 #We then mapped the URL / to the function home(). Now, when someone visits this URL, the function home() will execute. 
 @app.route('/')
@@ -32,12 +46,16 @@ def test():
 def testEspaniol():
   return render_template('espaniol/test_espaniol.html') 
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
   form = ContactForm()
  
   if request.method == 'POST':
-    return 'Form posted.'
+    if form.validate() == False:
+      flash('All fields are required.')
+      return render_template('contact.html', form=form)
+    else:
+      return 'Form posted.'
  
   elif request.method == 'GET':
     return render_template('contact.html', form=form)
