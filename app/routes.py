@@ -22,8 +22,8 @@ mail = Mail()
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = 'contact@example.com'
-app.config["MAIL_PASSWORD"] = 'your-password'
+app.config["MAIL_USERNAME"] = 'moises.full.ios@gmail.com'
+app.config["MAIL_PASSWORD"] = 'nirvana4488'
  
 mail.init_app(app)
  
@@ -55,6 +55,13 @@ def contact():
       flash('All fields are required.')
       return render_template('contact.html', form=form)
     else:
+      msg = Message(form.subject.data, sender='moises.full.ios@gmail.com', recipients=['your_email@example.com'])
+      msg.body = """
+      From: %s <%s>
+      %s
+      """ % (form.name.data, form.email.data, form.message.data)
+      mail.send(msg)
+ 
       return 'Form posted.'
  
   elif request.method == 'GET':
