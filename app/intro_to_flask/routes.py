@@ -1,32 +1,12 @@
 #to active the enviroment just type . bin/activate
-
+from intro_to_flask import app
 #First. we imported the Flask class and a function render_template.
-from flask import Flask, render_template, request, flash
+from flask import render_template, request, flash
 #Importing forms, preventing a CSRF attack
 from forms import ContactForm
 
-from flask.ext.mail import Message, Mail
- 
-#we created a new instance of the Flask class.
-app = Flask(__name__)  
-
-#To prevent CSFR
-#One way to do this is to keep a unique token hidden inside your HTML <form> tag that cannot be guessed by attackers. 
-#When the form POSTs to your server, the token is checked first. 
-#If the token does not match, your server rejects the form submission and does not touch the form data. 
-#If the token matches, the server proceeds with form handling and validation.
-app.secret_key = 'yo me llamo Ralf' #conviene que sea algo mas compleja ;) 
- 
-mail = Mail()
-
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = 'moises.full.ios@gmail.com'
-app.config["MAIL_PASSWORD"] = 'nirvana4488'
- 
-mail.init_app(app)
- 
+from flask.ext.mail import Message, Mail 
+mail = Mail() 
   
  
 #We then mapped the URL / to the function home(). Now, when someone visits this URL, the function home() will execute. 
@@ -55,14 +35,14 @@ def contact():
       flash('All fields are required.')
       return render_template('contact.html', form=form)
     else:
-      msg = Message(form.subject.data, sender='moises.full.ios@gmail.com', recipients=['your_email@example.com'])
+      msg = Message(form.subject.data, sender='ricardo@myapp.com', recipients=['moises.full.ios@gmail.com'])
       msg.body = """
       From: %s <%s>
       %s
       """ % (form.name.data, form.email.data, form.message.data)
       mail.send(msg)
  
-      return 'Form posted.'
+      return render_template('contact.html', success=True)
  
   elif request.method == 'GET':
     return render_template('contact.html', form=form)
