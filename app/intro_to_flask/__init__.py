@@ -18,3 +18,9 @@ app.config["MAIL_PASSWORD"] = 'nirvana4488'
  
 from routes import mail
 mail.init_app(app)
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/myflaskdb'
+ 
+from models import db
+db.init_app(app)
